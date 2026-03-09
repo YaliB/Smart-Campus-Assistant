@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 
 # Database and authentication imports
 from .database.db import SessionLocal
-from .database.init_db import init_root_admin
+from .database.init_admin import init_root_admin
 # Import Routers for API endpoints
 from .routers.api_router import api_router
 from .routers.admin_router import router as admin_router
@@ -50,7 +50,7 @@ app.add_middleware(
 
 # Configure routers for API endpoints
 app.include_router(api_router, prefix="/api", tags=["Student Assistant"]) # All routes in this router will be prefixed with /api =(e.g., /api/ask)
-app.include_router(admin_router, prefix="/admin", tags=["Admin Management"])
+app.include_router(admin_router, prefix="/api/admin", tags=["Admin Management"])
 
 
 # Health check endpoint to verify the server is running successfully

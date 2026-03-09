@@ -3,9 +3,18 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
 from dotenv import load_dotenv
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+
+from sqlalchemy.orm import Session
+from ..database.db import get_db
+from ..database.db_models import User
+
 
 # Load environment variables
 load_dotenv()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/admin/login")
 
 # JWT Configuration
 # It's crucial to have a strong SECRET_KEY in production (.env)
@@ -46,3 +55,33 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     # Generate the encoded token string
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        # PyJWT decoding logic
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+    except jwt.PyJWTError: # Updated to PyJWT's specific error class
+        raise credentials_exception
+        
+    user = db.query(User).filter(User.email == email).first()
+    if user is None:
+        raise credentials_exception
+        
+    return user
+
+def get_current_admin_user(current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="The user doesn't have enough privileges"
+        )
+    return current_user
