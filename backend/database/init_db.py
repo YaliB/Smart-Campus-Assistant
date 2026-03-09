@@ -1,5 +1,5 @@
 from datetime import datetime
-from database.database import SessionLocal
+from backend.database.db import SessionLocal
 from database.db_models import ReceptionHour, ExamSchedule, FAQ, Room
 
 def seed_data():

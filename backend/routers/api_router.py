@@ -2,19 +2,19 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 # Import our database connection dependency
-from database.database import get_db
+from backend.database.db import get_db
 
 # Import our Pydantic schemas for data validation
 from backend.api_models.api_ask_schemas import AskRequest, AskResponse
 
 # Import our business logic services
-from services.db_service import get_relevant_context
-from services.ai_service import get_ai_response
+from backend.services.db_service import get_relevant_context
+from backend.services.ai_service import get_ai_response
 
 # Initialize the router
-router = APIRouter()
+api_router = APIRouter()
 
-@router.post("/ask", response_model=AskResponse)
+@api_router.post("/ask", response_model=AskResponse)
 async def ask_question(request: AskRequest, db: Session = Depends(get_db)):
     """
     Main endpoint for the Smart Campus Assistant.

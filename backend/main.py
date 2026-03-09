@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 # Import Routers for API endpoints
-from api.routes import router as api_router
+from backend.routers.api_router import api_router
 # from api.admin_routes import admin_router
 
 # Initialize the FastAPI application
