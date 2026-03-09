@@ -1,7 +1,40 @@
+import os
 from datetime import datetime
+from sqlalchemy.orm import Session
 from backend.database.db import SessionLocal
-from database.db_models import ReceptionHour, ExamSchedule, FAQ, Room
+from database.db_models import User, ReceptionHour, ExamSchedule, FAQ, Room
+from services.auth_service import get_password_hash, verify_password
 
+
+def init_root_admin(db: Session):
+    """
+    Ensures the root admin user exists based on .env configuration.
+    Called once during application startup.
+    """
+    root_email = os.getenv("ROOT_ADMIN_EMAIL", "root@campus.ac.il")
+    root_pass = os.getenv("ROOT_ADMIN_PASSWORD", "admin123")
+    
+    user = db.query(User).filter(User.email == root_email).first()
+    
+    if not user:
+        hashed_pw = get_password_hash(root_pass)
+        new_root = User(email=root_email, password_hash=hashed_pw, is_admin=True)
+        db.add(new_root)
+        db.commit()
+        print(f"[*] Bootstrapped ROOT Admin: {root_email}")
+    else:
+        if not verify_password(root_pass, user.password_hash):
+            user.password_hash = get_password_hash(root_pass)
+            db.commit()
+            print("[*] ROOT Admin password updated from .env")
+        
+        if not user.is_admin:
+            user.is_admin = True
+            db.commit()
+            print("[*] Restored admin privileges to ROOT Admin")
+
+
+# This function is intended to be called once to populate the database with initial data for testing and development purposes. 
 def seed_data():
     db = SessionLocal()
     

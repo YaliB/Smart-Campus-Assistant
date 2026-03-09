@@ -2,16 +2,33 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+from contextlib import asynccontextmanager
 
+# Database and authentication imports
+from database.db import SessionLocal
+from database.init_db import init_root_admin
 # Import Routers for API endpoints
 from backend.routers.api_router import api_router
-# from api.admin_routes import admin_router
+from backend.routers.admin_router import router as admin_router
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan function to initialize resources when the application starts and clean up when it shuts down."""
+    db = SessionLocal()
+    try:
+        init_root_admin(db) # Ensure the root admin user is created or updated at startup
+    finally:
+        db.close()
+    yield # Syntax required for async context manager, allows the application to run until shutdown
+
 
 # Initialize the FastAPI application
 app = FastAPI(
     title="Smart Campus Assistant API",
     description="Backend service for the Smart Campus Assistant application.",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # Configure CORS for React frontend integration
@@ -33,8 +50,7 @@ app.add_middleware(
 
 # Configure routers for API endpoints
 app.include_router(api_router, prefix="/api", tags=["Student Assistant"]) # All routes in this router will be prefixed with /api =(e.g., /api/ask)
-# TODO for future implementation: Include the Admin router
-# app.include_router(admin_router, prefix="/admin", tags=["Admin Management"])
+app.include_router(admin_router, prefix="/admin", tags=["Admin Management"])
 
 
 # Health check endpoint to verify the server is running successfully
