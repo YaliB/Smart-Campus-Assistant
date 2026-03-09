@@ -4,11 +4,11 @@ from sqlalchemy.orm import Session
 from datetime import timedelta
 
 # Import database connection and models
-from database.db import get_db
-from database.db_models import User
+from ..database.db import get_db
+from ..database.db_models import User
 
 # Import authentication logic
-from services.auth_service import verify_password, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
+from ..services.auth_service import verify_password, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
 
 router = APIRouter()
 
@@ -26,7 +26,7 @@ def login_for_access_token(
     user = db.query(User).filter(User.email == form_data.username).first()
     
     # 2. Verify user exists and password is correct
-    if not user or not verify_password(form_data.password, user.password_hash):
+    if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",

@@ -1,9 +1,9 @@
 import os
 from datetime import datetime
 from sqlalchemy.orm import Session
-from backend.database.db import SessionLocal
-from database.db_models import User, ReceptionHour, ExamSchedule, FAQ, Room
-from services.auth_service import get_password_hash, verify_password
+from ..database.db import SessionLocal
+from ..database.db_models import User, ReceptionHour, ExamSchedule, FAQ, Room
+from ..services.auth_service import get_password_hash, verify_password
 
 
 def init_root_admin(db: Session):
@@ -18,13 +18,13 @@ def init_root_admin(db: Session):
     
     if not user:
         hashed_pw = get_password_hash(root_pass)
-        new_root = User(email=root_email, password_hash=hashed_pw, is_admin=True)
+        new_root = User(email=root_email, hashed_password=hashed_pw, is_admin=True, student_id="00000000")
         db.add(new_root)
         db.commit()
         print(f"[*] Bootstrapped ROOT Admin: {root_email}")
     else:
-        if not verify_password(root_pass, user.password_hash):
-            user.password_hash = get_password_hash(root_pass)
+        if not verify_password(root_pass, user.hashed_password):
+            user.hashed_password = get_password_hash(root_pass)
             db.commit()
             print("[*] ROOT Admin password updated from .env")
         

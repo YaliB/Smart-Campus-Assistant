@@ -5,11 +5,11 @@ import uvicorn
 from contextlib import asynccontextmanager
 
 # Database and authentication imports
-from database.db import SessionLocal
-from database.init_db import init_root_admin
+from .database.db import SessionLocal
+from .database.init_db import init_root_admin
 # Import Routers for API endpoints
-from backend.routers.api_router import api_router
-from backend.routers.admin_router import router as admin_router
+from .routers.api_router import api_router
+from .routers.admin_router import router as admin_router
 
 
 @asynccontextmanager
