@@ -1,7 +1,22 @@
-# Byte-compiled / optimized / DLL files
+# Environments
+.env
+.venv
+venv/
+env/
+
+# Database
+*.db
+*.sqlite3
+backend/database/campus_data.db
+
+# Python
 __pycache__/
-*.py[codz]
+*.py[cod]
 *$py.class
+.pytest_cache/
+
+# Byte-compiled / optimized / DLL files
+*.py[codz]
 
 # C extensions
 *.so
@@ -135,11 +150,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
 .envrc
-.venv
-env/
-venv/
 ENV/
 env.bak/
 venv.bak/
