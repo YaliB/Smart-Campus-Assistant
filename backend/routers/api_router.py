@@ -1,21 +1,28 @@
+# Student Assistant
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 # Import our database connection dependency
-from backend.database.db import get_db
+from ..database.db import get_db
 
 # Import our Pydantic schemas for data validation
-from backend.api_models.api_ask_schemas import AskRequest, AskResponse
+from ..api_models.api_ask_schemas import AskRequest, AskResponse
 
 # Import our business logic services
-from backend.services.db_service import get_relevant_context
-from backend.services.ai_service import get_ai_response
+from ..database.db_models import User
+from ..services.auth_service import get_current_user
+from ..services.db_service import get_relevant_context
+from ..services.ai_service import get_ai_response
 
 # Initialize the router
 api_router = APIRouter()
 
 @api_router.post("/ask", response_model=AskResponse)
-async def ask_question(request: AskRequest, db: Session = Depends(get_db)):
+async def ask_question(
+    request: AskRequest, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user) # This makes the endpoint protected. Only registered users with a valid JWT token can access it. 
+    ):
     """
     Main endpoint for the Smart Campus Assistant.
     Receives a student's question, retrieves local context, and generates an AI response.
