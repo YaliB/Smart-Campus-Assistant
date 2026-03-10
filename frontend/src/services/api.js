@@ -1,7 +1,24 @@
 import axios from 'axios';
 
-// Define the base URL for the FastAPI backend
-const API_URL = 'http://localhost:8000/api';
+// Create an Axios instance with the base URL of your FastAPI backend
+const api = axios.create({
+    //TODO add env variable for this
+    baseURL: 'http://localhost:8000', // Base URL for all requests
+});
+
+// Interceptor to inject the JWT token into requests automatically
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 /**
  * Sends a question to the backend AI service.
@@ -10,11 +27,14 @@ const API_URL = 'http://localhost:8000/api';
  */
 export const askQuestion = async (question) => {
     try {
-        // Send a POST request matching the backend AskRequest schema
-        const response = await axios.post(`${API_URL}/ask`, { question });
+        // We use api.post, and since baseURL is already set, we just add the relative route
+        const response = await api.post('/api/ask', { question });
         return response.data;
     } catch (error) {
         console.error("Error communicating with the backend:", error);
         throw error;
     }
 };
+
+// Export the instance as default for AuthContext and other services
+export default api;

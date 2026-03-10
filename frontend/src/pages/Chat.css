@@ -1,0 +1,109 @@
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    max-width: 800px;
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+}
+
+.messages-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.message {
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 15px;
+    font-size: 1rem;
+}
+
+.message.user {
+    align-self: flex-end;
+    background-color: #007bff;
+    color: white;
+}
+
+.message.bot {
+    align-self: flex-start;
+    background-color: #f1f0f0;
+    color: #333;
+}
+
+.category-tag {
+    display: block;
+    font-size: 0.75rem;
+    margin-top: 5px;
+    color: #888;
+    font-style: italic;
+}
+
+.input-area {
+    display: flex;
+    padding: 20px;
+    border-top: 1px solid #ddd;
+    gap: 10px;
+}
+
+.input-area input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.input-area button {
+    padding: 10px 20px;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    border-radius: 8px 8px 0 0;
+}
+
+.chat-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.logout-button {
+    background-color: #dc3545; /* Red color for logout */
+    color: white;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+}
+
+.logout-button:hover {
+    background-color: #c82333;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.dashboard-button {
+    background-color: #28a745; /* Green color for dashboard */
+    color: white;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+}
+
+.dashboard-button:hover {
+    background-color: #218838;
+}
