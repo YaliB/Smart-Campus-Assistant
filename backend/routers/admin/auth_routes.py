@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
@@ -8,16 +8,21 @@ from ...database.db import get_db
 from ...database.db_models import User
 from ...services.auth_service import verify_password, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
 
+from ...services.api_rate_limit import limiter
+
 # No prefix needed here, it will be handled by the master router
 router = APIRouter()
 
 @router.post("/login")
+@limiter.limit("10/minute") # Rate limit: 10 login attempts per minute per IP address
 def login_for_access_token(
+    request: Request, # needed to access the client's IP for rate limiting
     form_data: OAuth2PasswordRequestForm = Depends(), 
     db: Session = Depends(get_db)
 ):
     """
     Authenticates an admin user and returns a JWT token.
+    Protected against brute-force attacks via rate limiting.
     """
     user = db.query(User).filter(User.email == form_data.username).first()
     
@@ -27,13 +32,6 @@ def login_for_access_token(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
-        )
-        
-    # Check if user has admin privileges
-    if not user.is_admin:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access denied: Admin privileges required",
         )
 
     # Create JWT token

@@ -3,13 +3,17 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from contextlib import asynccontextmanager
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
-# Database and authentication imports
+# Database and initialization imports
 from .database.db import SessionLocal
 from .database.init_admin import init_root_admin
-# Import Routers for API endpoints
-from .routers.api_router import api_router
+# Router imports
+from .routers.students_router import router as students_router
 from .routers.admin_router import router as admin_router
+# Services imports
+from .services.api_rate_limit import limiter
 
 
 @asynccontextmanager
@@ -31,6 +35,10 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+# Register the rate limiter and its exception handler
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 # Configure CORS for React frontend integration
 # React development servers typically run on port 3000 or 5173 (Vite)
 # TODO: Make this more flexible by using environment variables or configuration files for allowed origins
@@ -49,7 +57,7 @@ app.add_middleware(
 )
 
 # Configure routers for API endpoints
-app.include_router(api_router, prefix="/api", tags=["Student Assistant"]) # All routes in this router will be prefixed with /api =(e.g., /api/ask)
+app.include_router(students_router, prefix="/api", tags=["Student Assistant"]) # All routes in this router will be prefixed with /api =(e.g., /api/ask)
 app.include_router(admin_router, prefix="/api/admin", tags=["Admin Management"])
 
 
