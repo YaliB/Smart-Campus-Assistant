@@ -90,3 +90,20 @@
 .logout-button:hover {
     background-color: #c82333;
 }
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.dashboard-button {
+    background-color: #28a745; /* Green color for dashboard */
+    color: white;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+}
+
+.dashboard-button:hover {
+    background-color: #218838;
+}

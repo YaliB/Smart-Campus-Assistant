@@ -42,4 +42,13 @@ def login_for_access_token(
     )
     
     # Return the token in the expected format
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+          "token_type": "bearer",
+          "user": {
+            "id": user.id,
+            "email": user.email,
+            "student_id": user.student_id,
+            "is_admin": user.is_admin
+        }
+    }

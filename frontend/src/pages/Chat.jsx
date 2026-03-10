@@ -13,7 +13,7 @@ export default function Chat() {
 
   // Setup refs and context for auto-scroll and logout
   const messagesEndRef = useRef(null);
-  const { logout } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   // Auto-scroll function
@@ -64,10 +64,20 @@ export default function Chat() {
 
   return (
     <div className="chat-container">
-      {/* Header with Logout Button */}
+      {/* Header with Logout and Dashboard Buttons */}
       <div className="chat-header">
         <h2>Smart Campus Assistant</h2>
-        <button onClick={handleLogout} className="logout-button">Logout</button>
+        <div className="header-actions">
+          {/* Conditionally render the Dashboard button ONLY if the user is an admin */}
+          {user && user.is_admin && (
+              <button onClick={() => navigate('/dashboard')} className="dashboard-button">
+                Dashboard
+              </button>
+          )}
+          <button onClick={handleLogout} className="logout-button">
+            Logout
+          </button>
+        </div>
       </div>
 
       <div className="messages-area">

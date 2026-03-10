@@ -4,39 +4,40 @@ import api from '../services/api';
 export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    // Initialize user state from localStorage if it exists
+    const [user, setUser] = useState(() => {
+        const savedUser = localStorage.getItem('user');
+        return savedUser ? JSON.parse(savedUser) : null;
+    });
     const [token, setToken] = useState(localStorage.getItem('token') || null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (token) {
-            setUser({ isAuthenticated: true });
-        } else {
-            setUser(null);
-        }
         setIsLoading(false);
     }, [token]);
 
     const login = async (email, password) => {
         try {
-            // Create URLSearchParams to send data as application/x-www-form-urlencoded
             const formData = new URLSearchParams();
-            // FastAPI's OAuth2PasswordRequestForm specifically looks for 'username'
             formData.append('username', email); 
             formData.append('password', password);
 
-            // Note: route is based on main.py routers setup
             const response = await api.post('/api/admin/login', formData, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
             });
             
-            const { access_token } = response.data;
+            // Destructure both the token AND the user object from the response
+            const { access_token, user: userData } = response.data;
             
+            // Save token
             setToken(access_token);
             localStorage.setItem('token', access_token);
-            setUser({ email }); 
+            
+            // Save the real user data from the DB
+            setUser(userData);
+            localStorage.setItem('user', JSON.stringify(userData));
             
             return true;
         } catch (error) {
@@ -49,6 +50,7 @@ export const AuthProvider = ({ children }) => {
         setToken(null);
         setUser(null);
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
     };
 
     return (

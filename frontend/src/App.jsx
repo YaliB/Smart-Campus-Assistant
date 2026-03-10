@@ -1,8 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from './context/AuthContext';
+
 import Login from './pages/Login';
-import Chat from './pages/Chat'; // Import the new Chat component
+import Chat from './pages/Chat';
+import Dashboard from './pages/Dashboard';
 
 // ProtectedRoute checks if the user is logged in
 const ProtectedRoute = ({ children }) => {
@@ -30,6 +32,16 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <Chat />
+                        </ProtectedRoute>
+                    } 
+                />
+                
+                {/* Protected Dashboard Route */}
+                <Route 
+                    path="/dashboard" 
+                    element={
+                        <ProtectedRoute>
+                            <Dashboard />
                         </ProtectedRoute>
                     } 
                 />
