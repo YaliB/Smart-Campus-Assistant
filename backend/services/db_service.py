@@ -75,6 +75,7 @@ def get_relevant_context(db: Session, user_question: str) -> str:
         for rec in reception_results:
             context_parts.append(f"- {rec.department}: {rec.hours} (Contact: {rec.contact_info})")
 
+    #TODO: delete this debug print statements
     print(f"Context retrieved for question: '{user_question}' (Translated: '{translated_question}')")
     print(f"Extracted Keywords: {keywords}")
     print (f"Context Parts Found: {len(context_parts)}")
