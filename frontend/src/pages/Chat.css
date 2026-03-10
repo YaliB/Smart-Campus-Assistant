@@ -62,3 +62,31 @@
 .input-area button {
     padding: 10px 20px;
 }
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    border-radius: 8px 8px 0 0;
+}
+
+.chat-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.logout-button {
+    background-color: #dc3545; /* Red color for logout */
+    color: white;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+}
+
+.logout-button:hover {
+    background-color: #c82333;
+}

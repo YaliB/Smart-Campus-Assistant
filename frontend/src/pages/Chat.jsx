@@ -1,18 +1,36 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { askQuestion } from '../services/api';
-import './Chat.css'; // We will create this file next
+import { AuthContext } from '../context/AuthContext';
+import './Chat.css';
 
 export default function Chat() {
-  // State for chat history
   const [messages, setMessages] = useState([
     { text: "Hello! I am the Smart Campus Assistant. How can I help you today?", sender: "bot" }
   ]);
-  
-  // State for input field
   const [inputValue, setInputValue] = useState('');
-  
-  // State for loading indicator
   const [isLoading, setIsLoading] = useState(false);
+
+  // Setup refs and context for auto-scroll and logout
+  const messagesEndRef = useRef(null);
+  const { logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  // Auto-scroll function
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Trigger auto-scroll whenever messages or loading state change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isLoading]);
+
+  // Logout handler
+  const handleLogout = () => {
+    logout(); // Clears the token from state and localStorage
+    navigate('/login'); // Redirects back to the login page
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,7 +42,6 @@ export default function Chat() {
     setIsLoading(true);
 
     try {
-      // Calling the unified api service
       const response = await askQuestion(userMessage.text);
       
       setMessages((prev) => [
@@ -47,6 +64,12 @@ export default function Chat() {
 
   return (
     <div className="chat-container">
+      {/* Header with Logout Button */}
+      <div className="chat-header">
+        <h2>Smart Campus Assistant</h2>
+        <button onClick={handleLogout} className="logout-button">Logout</button>
+      </div>
+
       <div className="messages-area">
         {messages.map((msg, index) => (
           <div key={index} className={`message ${msg.sender}`}>
@@ -61,6 +84,8 @@ export default function Chat() {
             <p>AI is typing...</p>
           </div>
         )}
+        {/* Invisible div used as an anchor for scrolling */}
+        <div ref={messagesEndRef} />
       </div>
       
       <form className="input-area" onSubmit={handleSubmit}>
