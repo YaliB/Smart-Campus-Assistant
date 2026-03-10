@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from deep_translator import GoogleTranslator
-from backend.database.db_models import FAQ, Room, ExamSchedule, ReceptionHour
+from ..database.db_models import FAQ, Room, ExamSchedule, ReceptionHour
 
 def get_relevant_context(db: Session, user_question: str) -> str:
     """
