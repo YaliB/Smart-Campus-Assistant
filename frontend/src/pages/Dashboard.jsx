@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UsersManager from '../components/UsersManager';
+import RoomsManager from '../components/RoomsManager';
+import FaqsManager from '../components/FaqsManager';
+import ReceptionHoursManager from '../components/ReceptionHoursManager';
+import ExamSchedulesManager from '../components/ExamSchedulesManager';
 import './Dashboard.css';
 
 export default function Dashboard() {
-    // State to manage which admin tab is currently active
     const [activeTab, setActiveTab] = useState('users');
     const navigate = useNavigate();
 
@@ -15,23 +18,20 @@ export default function Dashboard() {
                 <h2>Admin Panel</h2>
                 <nav>
                     <ul>
-                        <li 
-                            className={activeTab === 'users' ? 'active' : ''} 
-                            onClick={() => setActiveTab('users')}
-                        >
+                        <li className={activeTab === 'users' ? 'active' : ''} onClick={() => setActiveTab('users')}>
                             Users
                         </li>
-                        <li 
-                            className={activeTab === 'rooms' ? 'active' : ''} 
-                            onClick={() => setActiveTab('rooms')}
-                        >
+                        <li className={activeTab === 'rooms' ? 'active' : ''} onClick={() => setActiveTab('rooms')}>
                             Rooms
                         </li>
-                        <li 
-                            className={activeTab === 'faqs' ? 'active' : ''} 
-                            onClick={() => setActiveTab('faqs')}
-                        >
+                        <li className={activeTab === 'faqs' ? 'active' : ''} onClick={() => setActiveTab('faqs')}>
                             FAQs
+                        </li>
+                        <li className={activeTab === 'reception' ? 'active' : ''} onClick={() => setActiveTab('reception')}>
+                            Reception Hours
+                        </li>
+                        <li className={activeTab === 'exams' ? 'active' : ''} onClick={() => setActiveTab('exams')}>
+                            Exam Schedules
                         </li>
                     </ul>
                 </nav>
@@ -43,8 +43,10 @@ export default function Dashboard() {
             {/* Main Content Area */}
             <main className="dashboard-content">
                 {activeTab === 'users' && <UsersManager />}
-                {activeTab === 'rooms' && <div><h2>Rooms Management</h2><p>Coming soon...</p></div>}
-                {activeTab === 'faqs' && <div><h2>FAQs Management</h2><p>Coming soon...</p></div>}
+                {activeTab === 'rooms' && <RoomsManager />}
+                {activeTab === 'faqs' && <FaqsManager />}
+                {activeTab === 'reception' && <ReceptionHoursManager />}
+                {activeTab === 'exams' && <ExamSchedulesManager />}
             </main>
         </div>
     );

@@ -157,3 +157,45 @@
     border: 1px solid #007bff;
     border-radius: 4px;
 }
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.mt-1 {
+    margin-top: 5px;
+}
+
+.loading-text {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+}
+
+.search-bar-container {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eee;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.sortable-header {
+    cursor: pointer;
+    user-select: none; /* Prevents text selection when double clicking */
+    transition: background-color 0.2s;
+}
+
+.sortable-header:hover {
+    background-color: #e9ecef;
+}
