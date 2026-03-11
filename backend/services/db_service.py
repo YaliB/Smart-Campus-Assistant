@@ -4,9 +4,53 @@ from deep_translator import GoogleTranslator
 from ..database.db_models import FAQ, Room, ExamSchedule, ReceptionHour
 
 def get_relevant_context(db: Session, user_question: str) -> str:
-    """
-    Translates the user's question to English dynamically, extracts keywords,
-    and searches the database to support multilingual queries.
+    """Retrieves and assembles contextual information from the database to answer a user query.
+    
+    This function implements a **Two-Step Fallback Strategy** to ensure robust and comprehensive
+    search results across multiple database entities. The workflow is as follows:
+    
+    1. **Language Translation**: The user's question is automatically translated from any language
+       (e.g., Hebrew) to English using the Google Translate API. This enables multilingual query
+       support by standardizing all searches against English-indexed database fields.
+    
+    2. **Keyword Extraction**: The translated question is cleaned (removing punctuation and
+       stop words) to extract semantically meaningful keywords. These keywords form the basis
+       for database searches.
+    
+    3. **Two-Step Fallback Search** (applied to each entity type):
+       - **Step 1 (Strict AND)**: Queries the database requiring ALL keywords to match (AND logic).
+         This ensures high precision by returning only highly relevant results.
+       - **Step 2 (Fallback OR)**: If Step 1 returns no results, the search automatically relaxes
+         to OR logic, requiring ANY keyword to match. This increases recall and ensures users
+         receive helpful information even if exact multi-keyword matches don't exist.
+    
+    4. **Multi-Entity Search**: The function queries four database entities in sequence:
+       - FAQ (Frequently Asked Questions)
+       - Room (Campus locations and facilities)
+       - ExamSchedule (Exam dates, times, and locations)
+       - ReceptionHour (Department reception hours and contact information)
+    
+    5. **Context Assembly**: Results from all entities are formatted and combined into a
+       single context string, labeled by entity type for clarity.
+    
+    Args:
+        db (Session): A SQLAlchemy database session object used to execute queries against
+            the database. This session must be active and connected to the database.
+        user_question (str): The student's question in any language (e.g., Hebrew, English).
+            The function automatically detects and translates the language to English for
+            standardized database searches.
+    
+    Returns:
+        str: A formatted context string containing search results from the database, organized
+            by entity type (FAQs, Locations, Exam Schedules, Reception Hours). Each line
+            contains formatted information (e.g., "- Room Name (Building): Description"). If no
+            results are found in any entity, returns the fallback message:
+            "No specific local context found in the database."
+    
+    Raises:
+        No exceptions are explicitly raised. If translation fails (e.g., no internet connection),
+        the function gracefully falls back to using the original user question for database
+        searches. Database query failures are not caught; they propagate to the caller.
     """
     # 1. Translate the original question to English using a free translator
     try:

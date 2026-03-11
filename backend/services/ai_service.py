@@ -13,10 +13,37 @@ client = AsyncOpenAI(
 )
 
 async def get_ai_response(user_question: str, context: str) -> dict:
-    """
-    Sends the user's question and the retrieved local context to the AI model.
-    Instructs the model to answer based ONLY on the context, preventing hallucinations.
-    Returns a dictionary with 'answer' and 'category'.
+    """Generates an AI response to a user question using context from the database.
+    
+    This function orchestrates the core AI interaction flow by sending the user's question
+    and retrieved local context to the GPT-4o-mini model. The model is explicitly instructed
+    to answer ONLY based on the provided context to prevent hallucinations and ensure
+    accurate, factually-grounded responses. The model categorizes the response and enforces
+    strict bilingual language compliance (responding in the same language as the user's question).
+    
+    The function implements a robust exception-handling fallback mechanism: if the OpenAI API
+    is unavailable, times out, or returns invalid JSON, a graceful fallback response is returned.
+    This ensures the assistant remains operational even during service disruptions.
+    
+    Args:
+        user_question (str): The student's question in any language (e.g., Hebrew or English).
+            The AI will automatically detect the language and respond in the same language.
+        context (str): The retrieved local database context containing relevant FAQs, exam
+            schedules, room locations, and reception hours. This context is formatted as a
+            plain text string with labeled sections (e.g., "General Information & FAQs:").
+    
+    Returns:
+        dict: A dictionary with two keys:
+            - 'answer' (str): The AI-generated response to the user's question, or a fallback
+              message if the API fails. The answer is guaranteed to be in the same language
+              as the user's question.
+            - 'category' (str): One of ['Schedule', 'Location', 'General', 'Technical'].
+              Indicates the type of query for frontend routing and analytics.
+    
+    Raises:
+        No exceptions are raised; all errors are caught and handled internally. If an exception
+        occurs during the API call (network timeout, invalid JSON, API error), the function
+        returns a fallback response with category 'Technical'.
     """
     
     # Define the system prompt with strict rules for the AI
@@ -47,6 +74,8 @@ async def get_ai_response(user_question: str, context: str) -> dict:
     {context}
     """
 
+    print(f"Context being sent to the AI: {context}") # Debugging line to check the context being sent to the AI TODO : Remove
+
     try:
         # Make the asynchronous call to the OpenAI API
         response = await client.chat.completions.create(
@@ -65,6 +94,7 @@ async def get_ai_response(user_question: str, context: str) -> dict:
         
         # Parse the JSON string into a Python dictionary
         result_dict = json.loads(raw_content)
+        print(f"AI response parsed successfully: {result_dict}") # Debugging line to check the parsed result TODO : Remove
         return result_dict
 
     except Exception as e:
