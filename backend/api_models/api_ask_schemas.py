@@ -12,7 +12,7 @@ class AskRequest(BaseModel):
     # The actual question text. We enforce a minimum length to avoid empty/junk queries.
     question: str = Field(..., min_length=2, description="The question asked by the student")
     
-    # Optional student ID, prepared for rate-limiting and auth implementation TODO: Implement actual authentication and rate-limiting logic using this field
+    # Optional student ID
     student_id: Optional[str] = Field(None, description="Optional student ID for tracking and rate limiting")
 
 

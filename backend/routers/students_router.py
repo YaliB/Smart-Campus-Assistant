@@ -45,7 +45,7 @@ async def ask_question(
         )
 
     except Exception as e:
-        # Log the error (in the future, will use a logging library) TODO: Implement proper logging instead of print statements
+        # Log the error (in the future, will use a logging library)
         print(f"Error processing the /ask request: {e}")
         
         # Return a 500 Internal Server Error to the client

@@ -28,7 +28,7 @@ else:
 # SessionLocal class will be used to create actual database sessions for each request
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Dependency function to get a database session and close it after the request is done TODO add Context manager for better handling of sessions
+# Dependency function to get a database session and close it after the request is done
 def get_db():
     db = SessionLocal()
     try:

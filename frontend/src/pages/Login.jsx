@@ -26,7 +26,7 @@ export default function Login() {
             await login(email, password);
             
             // If successful, redirect to the chat/dashboard page
-            // Adjust the route based on your App.jsx setup TODO make a decision on the route structure
+            // Adjust the route based on your App.jsx setup
             navigate('/chat'); 
         } catch (err) {
             // Display error to the user

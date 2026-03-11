@@ -17,7 +17,6 @@ def get_user_identifier(request: Request) -> str:
             # Real security verification still happens safely in Depends(get_current_user).
             payload = jwt.decode(token, options={"verify_signature": False})
             user_email = payload.get("sub")
-            print(f"{user_email} is making a request to {request.url.path}") # Debug log to see which user is making requests TODO: delete this debug
             if user_email:
                 return user_email
         except Exception:

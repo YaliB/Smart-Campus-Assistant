@@ -74,8 +74,6 @@ async def get_ai_response(user_question: str, context: str) -> dict:
     {context}
     """
 
-    print(f"Context being sent to the AI: {context}") # Debugging line to check the context being sent to the AI TODO : Remove
-
     try:
         # Make the asynchronous call to the OpenAI API
         response = await client.chat.completions.create(
@@ -94,7 +92,6 @@ async def get_ai_response(user_question: str, context: str) -> dict:
         
         # Parse the JSON string into a Python dictionary
         result_dict = json.loads(raw_content)
-        print(f"AI response parsed successfully: {result_dict}") # Debugging line to check the parsed result TODO : Remove
         return result_dict
 
     except Exception as e:
