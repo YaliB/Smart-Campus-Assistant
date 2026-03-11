@@ -11,20 +11,21 @@ The project is designed to answer student questions using trusted campus data st
 
 ## Table Of Contents
 
-- [What The System Does](#what-the-system-does)
+- [What The System Does](#what-system-does)
 - [Project Structure](#project-structure)
 - [Architecture Summary](#architecture-summary)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
-- [Required Environment Variables](#required-environment-variables)
-- [Run The System](#run-the-system)
-- [Database And Migrations](#database-and-migrations)
-- [Authentication And Roles](#authentication-and-roles)
+- [Required Environment Variables](#required-env-vars)
+- [Run The System](#run-system)
+- [Database And Migrations](#database-migrations)
+- [Authentication And Roles](#authentication-roles)
 - [API Overview](#api-overview)
 - [Testing](#testing)
 - [Notes](#notes)
-- [Additional Documentation](#additional-documentation)
+- [Additional Documentation](#additional-docs)
 
+<a id="what-system-does"></a>
 ## 🎯 What The System Does
 
 - Authenticated students can ask natural-language questions through the assistant endpoint.
@@ -33,6 +34,7 @@ The project is designed to answer student questions using trusted campus data st
 - Admin users can log in and manage core campus knowledge entities.
 - A root admin account is auto-bootstrapped on backend startup.
 
+<a id="project-structure"></a>
 ## 🗂️ Project Structure
 
 - backend: FastAPI application, database, business services, Alembic migrations, tests
@@ -41,6 +43,7 @@ The project is designed to answer student questions using trusted campus data st
 
 For a deeper architecture breakdown, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
+<a id="architecture-summary"></a>
 ## 🏗️ Architecture Summary
 
 At a high level:
@@ -53,12 +56,14 @@ At a high level:
 
 More details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
+<a id="prerequisites"></a>
 ## ✅ Prerequisites
 
 - Python 3.11+ recommended
 - Node.js 18+ recommended
 - npm 9+ recommended
 
+<a id="installation"></a>
 ## ⚙️ Installation
 
 <details>
@@ -109,6 +114,7 @@ npm install
 
 </details>
 
+<a id="required-env-vars"></a>
 ## 🔐 Required Environment Variables
 
 Create a .env file inside backend and configure the variables below.
@@ -125,6 +131,7 @@ See full explanations and production notes in [docs/ENVIRONMENT.md](docs/ENVIRON
 | ROOT_ADMIN_EMAIL | Optional | root@campus.ac.il | Root admin email bootstrapped at startup |
 | ROOT_ADMIN_PASSWORD | Optional | admin123 | Root admin password bootstrapped at startup |
 
+<a id="run-system"></a>
 ## ▶️ Run The System
 
 <details>
@@ -165,6 +172,7 @@ Typical dev URL:
 
 </details>
 
+<a id="database-migrations"></a>
 ## 🗄️ Database And Migrations
 
 <details>
@@ -192,6 +200,7 @@ python seed.py
 
 </details>
 
+<a id="authentication-roles"></a>
 ## 👤 Authentication And Roles
 
 - JWT Bearer authentication is required for protected routes.
@@ -199,6 +208,7 @@ python seed.py
 - Admin routes under /api/admin/* are restricted to admin users.
 - Root admin account is initialized/synchronized at startup from env variables.
 
+<a id="api-overview"></a>
 ## 📡 API Overview
 
 <details>
@@ -215,6 +225,7 @@ python seed.py
 
 </details>
 
+<a id="testing"></a>
 ## 🧪 Testing
 
 From backend directory (with venv activated):
@@ -223,6 +234,7 @@ From backend directory (with venv activated):
 pytest tests/
 ~~~
 
+<a id="notes"></a>
 ## 📝 Notes
 
 <details>
@@ -234,6 +246,7 @@ pytest tests/
 
 </details>
 
+<a id="additional-docs"></a>
 ## 📚 Additional Documentation
 
 - Environment variables: [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md)
