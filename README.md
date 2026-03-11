@@ -88,7 +88,7 @@ Activate the virtual environment:
 Windows (PowerShell):
 
 ~~~powershell
-.\venv\Scripts\Activate.ps1
+.\venv\Scripts\Activate
 ~~~
 
 macOS/Linux (bash/zsh):
@@ -111,6 +111,8 @@ Open a new terminal and run:
 cd frontend
 npm install
 ~~~
+
+Reminder: Don't forget to run the `alembic upgrade head` command in the backend after setting up the `.env` file.
 
 </details>
 
