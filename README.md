@@ -231,7 +231,7 @@ python seed.py
 From backend directory (with venv activated):
 
 ~~~bash
-pytest tests/
+python -m pytest test_ai_service.py -v
 ~~~
 
 <a id="notes"></a>

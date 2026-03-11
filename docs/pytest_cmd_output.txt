@@ -1,0 +1,19 @@
+
+(.venv) D:\Coding\Elad\Smart-Campus-Assistant\backend>python -m pytest test_ai_service.py -v
+===================================================================================================== test session starts =====================================================================================================
+platform win32 -- Python 3.14.3, pytest-9.0.2, pluggy-1.6.0 -- D:\Coding\Elad\Smart-Campus-Assistant\backend\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Coding\Elad\Smart-Campus-Assistant\backend
+plugins: anyio-4.12.1, asyncio-1.3.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 5 items                                                                                                                                                                                                              
+
+test_ai_service.py::test_get_ai_response_success PASSED                                                                                                                                                                  [ 20%]
+test_ai_service.py::test_get_ai_response_hebrew_translation_rule PASSED                                                                                                                                                  [ 40%]
+test_ai_service.py::test_get_ai_response_empty_context_fallback PASSED                                                                                                                                                   [ 60%]
+test_ai_service.py::test_get_ai_response_invalid_json_handling PASSED                                                                                                                                                    [ 80%]
+test_ai_service.py::test_get_ai_response_network_timeout_or_failure PASSED                                                                                                                                               [100%]
+
+====================================================================================================== 5 passed in 0.73s ======================================================================================================
+
+(.venv) D:\Coding\Elad\Smart-Campus-Assistant\backend>
