@@ -5,12 +5,16 @@ import { AuthContext } from '../context/AuthContext';
 import './Chat.css';
 
 export default function Chat() {
-  const [messages, setMessages] = useState([
-    { text: "Hello! I am the Smart Campus Assistant. How can I help you today?", sender: "bot" }
-  ]);
+  const [messages, setMessages] = useState(() => {
+    const saved = localStorage.getItem('campusChatHistory'); // Load chat history from localStorage if available
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    return [{ text: "Hello! I am the Smart Campus Assistant. How can I help you today?", sender: "bot" }];
+  });
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const MAX_CHARS = 500;
+  const MAX_CHARS = 150; // Maximum characters allowed in input
 
   const messagesEndRef = useRef(null);
   const { user, logout } = useContext(AuthContext);
@@ -24,9 +28,20 @@ export default function Chat() {
     scrollToBottom();
   }, [messages, isLoading]);
 
+  useEffect(() => { // Save chat history to localStorage whenever messages change
+    localStorage.setItem('campusChatHistory', JSON.stringify(messages));
+  }, [messages]);
+
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const handleClearChat = () => {
+    if(window.confirm("Are you sure you want to clear the chat history?")) {
+        setMessages([{ text: "Hello! I am the Smart Campus Assistant. How can I help you today?", sender: "bot" }]);
+        localStorage.removeItem('campusChatHistory');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -68,6 +83,10 @@ export default function Chat() {
             <h2>Smart Campus Assistant</h2>
         </div>
         <div className="header-actions">
+          <button onClick={handleClearChat} className="clear-chat-button" title="Clear Chat">
+            🗑️
+          </button>
+
           {user && user.is_admin && (
               <button onClick={() => navigate('/dashboard')} className="dashboard-button">
                 Dashboard
