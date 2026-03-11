@@ -10,26 +10,23 @@ export default function Chat() {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const MAX_CHARS = 500;
 
-  // Setup refs and context for auto-scroll and logout
   const messagesEndRef = useRef(null);
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Auto-scroll function
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Trigger auto-scroll whenever messages or loading state change
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
 
-  // Logout handler
   const handleLogout = () => {
-    logout(); // Clears the token from state and localStorage
-    navigate('/login'); // Redirects back to the login page
+    logout();
+    navigate('/login');
   };
 
   const handleSubmit = async (e) => {
@@ -64,11 +61,13 @@ export default function Chat() {
 
   return (
     <div className="chat-container">
-      {/* Header with Logout and Dashboard Buttons */}
+      {/* Header */}
       <div className="chat-header">
-        <h2>Smart Campus Assistant</h2>
+        <div className="header-title">
+            <span className="header-icon emoji-symbol">🎓</span>
+            <h2>Smart Campus Assistant</h2>
+        </div>
         <div className="header-actions">
-          {/* Conditionally render the Dashboard button ONLY if the user is an admin */}
           {user && user.is_admin && (
               <button onClick={() => navigate('/dashboard')} className="dashboard-button">
                 Dashboard
@@ -80,36 +79,62 @@ export default function Chat() {
         </div>
       </div>
 
+      {/* Messages Area */}
       <div className="messages-area">
         {messages.map((msg, index) => (
-          <div key={index} className={`message ${msg.sender}`}>
-            <p>{msg.text}</p>
-            {msg.sender === 'bot' && msg.category && (
-              <span className="category-tag">{msg.category}</span>
-            )}
+          <div key={index} className={`message-wrapper ${msg.sender}`}>
+            <div className="message-avatar emoji-symbol">
+                {msg.sender === 'bot' ? '🤖' : '👤'}
+            </div>
+            <div className={`message-content ${msg.sender}`}>
+                <span className="sender-name">
+                    {msg.sender === 'bot' ? 'Campus AI' : 'You'}
+                </span>
+                <div className="message-bubble">
+                    <p dir="auto">{msg.text}</p>
+                    {msg.sender === 'bot' && msg.category && (
+                    <span className="category-tag">{msg.category}</span>
+                    )}
+                </div>
+            </div>
           </div>
         ))}
+        
+        {/* Typing Indicator */}
         {isLoading && (
-          <div className="message bot typing">
-            <p>AI is typing...</p>
+          <div className="message-wrapper bot">
+             <div className="message-avatar emoji-symbol">🤖</div>
+             <div className="message-content bot">
+                 <span className="sender-name">Campus AI</span>
+                 <div className="message-bubble typing-indicator">
+                    <span></span><span></span><span></span>
+                 </div>
+             </div>
           </div>
         )}
-        {/* Invisible div used as an anchor for scrolling */}
         <div ref={messagesEndRef} />
       </div>
       
-      <form className="input-area" onSubmit={handleSubmit}>
-        <input 
-          type="text" 
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Ask me anything about the campus..."
-          disabled={isLoading}
-        />
-        <button type="submit" disabled={isLoading || !inputValue.trim()}>
-          Send
-        </button>
-      </form>
+      {/* Input Area */}
+      <div className="input-section">
+          <form className="input-area" onSubmit={handleSubmit}>
+            <input 
+              type="text" 
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Ask me anything about the campus..."
+              disabled={isLoading}
+              maxLength={MAX_CHARS}
+              dir="auto" 
+            />
+            <button type="submit" disabled={isLoading || !inputValue.trim()} aria-label="send">
+              <svg viewBox="0 0 24 24" fill="currentColor" className="send-icon"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+            </button>
+          </form>
+          <div className={`char-counter ${inputValue.length >= MAX_CHARS ? 'limit-reached' : ''}`}>
+              {inputValue.length}/{MAX_CHARS}
+          </div>
+      </div>
     </div>
   );
 }
