@@ -9,7 +9,23 @@ Smart Campus Assistant is a full-stack campus support system that combines:
 
 The project is designed to answer student questions using trusted campus data stored in your own database, while giving administrators a controlled way to keep that data updated.
 
-## What The System Does
+## Table Of Contents
+
+- [What The System Does](#what-the-system-does)
+- [Project Structure](#project-structure)
+- [Architecture Summary](#architecture-summary)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Required Environment Variables](#required-environment-variables)
+- [Run The System](#run-the-system)
+- [Database And Migrations](#database-and-migrations)
+- [Authentication And Roles](#authentication-and-roles)
+- [API Overview](#api-overview)
+- [Testing](#testing)
+- [Notes](#notes)
+- [Additional Documentation](#additional-documentation)
+
+## 🎯 What The System Does
 
 - Authenticated students can ask natural-language questions through the assistant endpoint.
 - The backend retrieves relevant campus context from the database.
@@ -17,7 +33,7 @@ The project is designed to answer student questions using trusted campus data st
 - Admin users can log in and manage core campus knowledge entities.
 - A root admin account is auto-bootstrapped on backend startup.
 
-## Project Structure
+## 🗂️ Project Structure
 
 - backend: FastAPI application, database, business services, Alembic migrations, tests
 - frontend: React + Vite client application
@@ -25,7 +41,7 @@ The project is designed to answer student questions using trusted campus data st
 
 For a deeper architecture breakdown, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-## Architecture Summary
+## 🏗️ Architecture Summary
 
 At a high level:
 
@@ -37,18 +53,21 @@ At a high level:
 
 More details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-## Prerequisites
+## ✅ Prerequisites
 
 - Python 3.11+ recommended
 - Node.js 18+ recommended
 - npm 9+ recommended
 
-## Installation
+## ⚙️ Installation
+
+<details>
+<summary>Show installation steps</summary>
 
 ### 1. Clone the repository
 
 ~~~bash
-git clone <your-repository-url>
+git clone https://github.com/YaliB/Smart-Campus-Assistant.git
 cd Smart-Campus-Assistant
 ~~~
 
@@ -88,7 +107,9 @@ cd frontend
 npm install
 ~~~
 
-## Required Environment Variables
+</details>
+
+## 🔐 Required Environment Variables
 
 Create a .env file inside backend and configure the variables below.
 
@@ -104,7 +125,10 @@ See full explanations and production notes in [docs/ENVIRONMENT.md](docs/ENVIRON
 | ROOT_ADMIN_EMAIL | Optional | root@campus.ac.il | Root admin email bootstrapped at startup |
 | ROOT_ADMIN_PASSWORD | Optional | admin123 | Root admin password bootstrapped at startup |
 
-## Run The System
+## ▶️ Run The System
+
+<details>
+<summary>Show run commands (backend + frontend)</summary>
 
 Run backend and frontend in separate terminals.
 
@@ -139,7 +163,12 @@ Typical dev URL:
 
 - http://localhost:5173
 
-## Database And Migrations
+</details>
+
+## 🗄️ Database And Migrations
+
+<details>
+<summary>Show migration and seed commands</summary>
 
 The backend uses SQLAlchemy + Alembic.
 
@@ -161,14 +190,19 @@ Optional: seed demo campus data:
 python seed.py
 ~~~
 
-## Authentication And Roles
+</details>
+
+## 👤 Authentication And Roles
 
 - JWT Bearer authentication is required for protected routes.
 - Student assistant endpoint /api/ask requires a valid token.
 - Admin routes under /api/admin/* are restricted to admin users.
 - Root admin account is initialized/synchronized at startup from env variables.
 
-## API Overview
+## 📡 API Overview
+
+<details>
+<summary>Show endpoints</summary>
 
 - GET /: health check
 - POST /api/ask: ask the assistant (authenticated)
@@ -179,7 +213,9 @@ python seed.py
 - CRUD under /api/admin/exams
 - CRUD under /api/admin/reception
 
-## Testing
+</details>
+
+## 🧪 Testing
 
 From backend directory (with venv activated):
 
@@ -187,13 +223,18 @@ From backend directory (with venv activated):
 pytest tests/
 ~~~
 
-## Notes
+## 📝 Notes
+
+<details>
+<summary>Show implementation notes</summary>
 
 - Frontend API base URL is currently hardcoded to http://localhost:8000 in frontend/src/services/api.js.
 - CORS allowlist is currently configured in backend/main.py for localhost ports used in development.
 - For production deployment, lock down CORS, set a strong JWT secret, and configure a production-grade database.
 
-## Additional Documentation
+</details>
+
+## 📚 Additional Documentation
 
 - Environment variables: [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md)
 - Architecture details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
