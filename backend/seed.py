@@ -35,6 +35,7 @@ def seed_data():
 
         # --- 4. FAQs ---
         faqs = [
+            FAQ(question="What can you do?", answer="I can help you find useful information about campus. Try asking me where a certain place is, when a certain test is held, opening hours or just a general question I'm here for you! :)", tags="help, Capabilities, General"),
             FAQ(question="How do I register for courses?", answer="Registration is done through the student portal during the designated windows. Make sure you have paid the tuition advance.", tags="Registration, Portal, Tuition"),
             FAQ(question="Can I borrow video equipment?", answer="Yes, students taking video or animation courses can borrow cameras and tripods from the media center in the Mitchell building with their student ID.", tags="Equipment, Video, Media, Borrow"),
             FAQ(question="How do I connect to the campus Wi-Fi?", answer="Select 'Campus-Net' from your device and log in using your standard student email and password.", tags="IT, Wifi, Internet, Network"),
