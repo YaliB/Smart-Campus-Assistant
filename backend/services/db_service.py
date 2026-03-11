@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 from deep_translator import GoogleTranslator
 from ..database.db_models import FAQ, Room, ExamSchedule, ReceptionHour
 
@@ -36,29 +36,43 @@ def get_relevant_context(db: Session, user_question: str) -> str:
     context_parts = []
 
     # 4. Search the Database using the ENGLISH keywords
-    faq_results = db.query(FAQ).filter(
-        or_(*[FAQ.question.ilike(f"%{kw}%") for kw in keywords]) |
-        or_(*[FAQ.tags.ilike(f"%{kw}%") for kw in keywords])
-    ).limit(3).all()
+    # Two-Step Fallback Strategy: First try strict AND, then fallback to OR.
+
+    # --- General Information & FAQs ---
+    # Step 1: Strict AND search for maximum accuracy
+    faq_and_conditions = [or_(FAQ.question.ilike(f"%{kw}%"), FAQ.tags.ilike(f"%{kw}%")) for kw in keywords]
+    faq_results = db.query(FAQ).filter(and_(*faq_and_conditions)).limit(5).all()
     
+    # Step 2: Fallback to OR with a larger limit if nothing is found
+    if not faq_results:
+        faq_or_conditions = [or_(FAQ.question.ilike(f"%{kw}%"), FAQ.tags.ilike(f"%{kw}%")) for kw in keywords]
+        faq_results = db.query(FAQ).filter(or_(*faq_or_conditions)).limit(15).all()
+
     if faq_results:
         context_parts.append("General Information & FAQs:")
         for faq in faq_results:
             context_parts.append(f"- Q: {faq.question} | A: {faq.answer}")
 
-    room_results = db.query(Room).filter(
-        or_(*[Room.room_name.ilike(f"%{kw}%") for kw in keywords]) |
-        or_(*[Room.description.ilike(f"%{kw}%") for kw in keywords])
-    ).limit(3).all()
+    # --- Campus Locations ---
+    room_and_conditions = [or_(Room.room_name.ilike(f"%{kw}%"), Room.description.ilike(f"%{kw}%")) for kw in keywords]
+    room_results = db.query(Room).filter(and_(*room_and_conditions)).limit(5).all()
     
+    if not room_results:
+        room_or_conditions = [or_(Room.room_name.ilike(f"%{kw}%"), Room.description.ilike(f"%{kw}%")) for kw in keywords]
+        room_results = db.query(Room).filter(or_(*room_or_conditions)).limit(15).all()
+
     if room_results:
         context_parts.append("Campus Locations:")
         for room in room_results:
             context_parts.append(f"- {room.room_name} ({room.building}): {room.description}")
 
-    exam_results = db.query(ExamSchedule).filter(
-        or_(*[ExamSchedule.course_name.ilike(f"%{kw}%") for kw in keywords])
-    ).limit(3).all()
+    # --- Exam & Submission Schedules ---
+    exam_and_conditions = [ExamSchedule.course_name.ilike(f"%{kw}%") for kw in keywords]
+    exam_results = db.query(ExamSchedule).filter(and_(*exam_and_conditions)).limit(5).all()
+    
+    if not exam_results:
+        exam_or_conditions = [ExamSchedule.course_name.ilike(f"%{kw}%") for kw in keywords]
+        exam_results = db.query(ExamSchedule).filter(or_(*exam_or_conditions)).limit(15).all()
     
     if exam_results:
         context_parts.append("Exam & Submission Schedules:")
@@ -66,9 +80,13 @@ def get_relevant_context(db: Session, user_question: str) -> str:
             exam_time_str = exam.exam_date.strftime('%Y-%m-%d %H:%M')
             context_parts.append(f"- {exam.course_name}: {exam_time_str} at {exam.location}")
 
-    reception_results = db.query(ReceptionHour).filter(
-        or_(*[ReceptionHour.department.ilike(f"%{kw}%") for kw in keywords])
-    ).limit(3).all()
+    # --- Reception Hours ---
+    rec_and_conditions = [ReceptionHour.department.ilike(f"%{kw}%") for kw in keywords]
+    reception_results = db.query(ReceptionHour).filter(and_(*rec_and_conditions)).limit(5).all()
+    
+    if not reception_results:
+        rec_or_conditions = [ReceptionHour.department.ilike(f"%{kw}%") for kw in keywords]
+        reception_results = db.query(ReceptionHour).filter(or_(*rec_or_conditions)).limit(15).all()
     
     if reception_results:
         context_parts.append("Reception Hours:")
@@ -78,7 +96,7 @@ def get_relevant_context(db: Session, user_question: str) -> str:
     #TODO: delete this debug print statements
     print(f"Context retrieved for question: '{user_question}' (Translated: '{translated_question}')")
     print(f"Extracted Keywords: {keywords}")
-    print (f"Context Parts Found: {len(context_parts)}")
+    print(f"Context Parts Found: {len(context_parts)}")
             
     # 5. Return the combined context
     if not context_parts:
